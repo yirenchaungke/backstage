@@ -1,0 +1,32 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-weight: "微软雅黑";
+}
+
+img {
+    border: 0;
+}
+
+ol,
+ul,
+li {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+.box-card {
+    height: 100%;
+}
+
+.el-step__title {
+    font-size: 10px
+}
