@@ -33,16 +33,17 @@ export default {
         meta: { msg, status }
       } = res.data;
       if (status === 200) {
+        //成功后跳转home首页
         this.$router.push({ name: "home" });
+        //验证成功提示成功
         this.$message.success(msg);
+        //成功后本地储存token值
         localStorage.setItem("token", data.token);
-        this.formData={}
+        this.formData = {};
       } else {
+        //失败提示失败的提示
         this.$message.warning(msg);
       }
-      //验证成功提示成功
-      //成功后跳转home首页
-      //失败提示失败的提示
     }
   }
 };

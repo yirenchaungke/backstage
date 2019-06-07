@@ -21,6 +21,7 @@
       <!-- 左侧 -->
       <el-aside class="aside" width="202px">
         <el-menu
+        :router="true"
           :unique-opened="true"
           background-color="#545c64"
           text-color="#fff"
@@ -33,7 +34,7 @@
               <span>用户管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">
+              <el-menu-item index="users">
                 <i class="el-icon-location"></i>
                 <span>用户列表</span>
               </el-menu-item>
@@ -106,7 +107,9 @@
         </el-menu>
       </el-aside>
 
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <router-view />
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -127,6 +130,7 @@ export default {
     quit(){
       localStorage.clear();
       this.$router.push({name:"login"})
+      this.$message.success("退出成功");
     }
   }
 };
