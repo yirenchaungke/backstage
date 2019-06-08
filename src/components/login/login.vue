@@ -27,7 +27,7 @@ export default {
   methods: {
     //登录请求函数
     async login() {
-      const res = await this.$http.post("api/login", this.formData);
+      const res = await this.$http.post("http://47.97.214.102:8888/api/private/v1/login", this.formData);
       const {
         data,
         meta: { msg, status }
