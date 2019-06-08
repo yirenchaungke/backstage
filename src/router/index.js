@@ -5,6 +5,12 @@ import Login from '@/components/login/login'
 import Users from "@/components/users/users"
 import Rights from "@/components/rights/rights"
 import Roles from '@/components/roles/roles'
+import Goods from '@/components/goods/goods'
+import Orders from '@/components/orders/orders'
+import Params from '@/components/params/params'
+import Categories from '@/components/categories/categories'
+import Reports from '@/components/reports/reports'
+
 Vue.use(Router)
 
 export default new Router({
@@ -31,6 +37,36 @@ export default new Router({
                     path: 'roles',
                     name: 'roles',
                     component: Roles
+                },
+                {
+                    path: 'goods',
+                    name: 'goods',
+                    component: Goods
+                },
+                {
+                    path: 'orders',
+                    name: 'orders',
+                    component: Orders
+                },
+                {
+                    path: 'params',
+                    name: 'params',
+                    component: Params
+                },
+                {
+                    path: 'categories',
+                    name: 'categories',
+                    component: Categories
+                },
+                {
+                    path: 'reports',
+                    name: 'reports',
+                    component: Reports
+                },
+                {
+                    path: 'reports',
+                    name: 'reports',
+                    component: Reports
                 }
             ]
         }

@@ -21,94 +21,31 @@
       <!-- 左侧 -->
       <el-aside class="aside" width="202px">
         <el-menu
-        :router="true"
+          :router="true"
           :unique-opened="true"
           background-color="#545c64"
           text-color="#fff"
           active-text-color="#ffd04b"
         >
           <!-- 用户管理 1-->
-          <el-submenu index="1">
+          <el-submenu :index="''+i.order" v-for="(i,index) in menus" :key="index">
             <template slot="title">
               <i class="el-icon-menu"></i>
-              <span>用户管理</span>
+              <span>{{i.authName}}</span>
             </template>
-            <el-menu-item-group>
-              <el-menu-item index="users">
+            <el-menu-item-group v-for="(i1,index) in i.children" :key="index">
+              <el-menu-item :index="i1.path">
                 <i class="el-icon-location"></i>
-                <span>用户列表</span>
+                <span>{{i1.authName}}</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-          <!-- 权限管理 2-->
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>权限管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="roles">
-                <i class="el-icon-location"></i>
-                <span>角色列表</span>
-              </el-menu-item>
-              <el-menu-item index="rights">
-                <i class="el-icon-location"></i>
-                <span>权限列表</span>
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <!-- 商品管理 3-->
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>商品管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="3-1">
-                <i class="el-icon-location"></i>
-                <span>商品列表</span>
-              </el-menu-item>
-              <el-menu-item index="3-2">
-                <i class="el-icon-location"></i>
-                <span>分类参数</span>
-              </el-menu-item>
-              <el-menu-item index="3-3">
-                <i class="el-icon-location"></i>
-                <span>商品分类</span>
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <!-- 订单管理 4-->
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>订单管理</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="1-4">
-                <i class="el-icon-location"></i>
-                <span>订单列表</span>
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <!-- 数据统计 5-->
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-menu"></i>
-              <span>数据统计</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="1-5">
-                <i class="el-icon-location"></i>
-                <span>数据报表</span>
-              </el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
+
         </el-menu>
       </el-aside>
 
       <el-main class="main">
-        <router-view />
+        <router-view/>
       </el-main>
     </el-container>
   </el-container>
@@ -117,19 +54,32 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      menus:[]
+    };
   },
   beforeCreate() {
-    const token = localStorage.getItem("token")
-    if(!token){
+    const token = localStorage.getItem("token");
+    if (!token) {
       //如果没有token直接跳转到login页面
-      this.$router.push({name:"login"})
+      this.$router.push({ name: "login" });
     }
   },
+  created() {
+    this.getMenus()
+  },
   methods: {
-    quit(){
+    //获取导航数据
+    async getMenus(){
+      const AUTH_TOKEN = localStorage.getItem("token");
+      this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
+      const res = await this.$http.get(`http://47.97.214.102:8888/api/private/v1/menus`)
+      console.log(res)
+      this.menus=res.data.data
+    },
+    quit() {
       localStorage.clear();
-      this.$router.push({name:"login"})
+      this.$router.push({ name: "login" });
       this.$message.success("退出成功");
     }
   }
