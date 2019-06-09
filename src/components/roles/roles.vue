@@ -3,7 +3,7 @@
     <!-- 面包屑 -->
     <my-bread level1="权限管理" level2="角色列表"></my-bread>
     <!-- 添加角色 -->
-    <el-button type="primary" plain class="r_btn">添加角色</el-button>
+    <el-button type="primary" plain class="r_btn" @click="addrole()">添加角色</el-button>
     <!-- 表格 -->
     <el-table :data="roleslist" min-height="400" border style="width: 100%">
       <el-table-column label="展开" width="60" type="expand">
@@ -90,9 +90,42 @@
           </el-dialog>
         </template>
       </el-table-column>
+
     </el-table>
+<!-- 添加角色对话框 -->
+    <el-dialog title="添加角色" :visible.sync="dialogFormVisibleAdd">
+      <el-form :model="form">
+        <el-form-item label="角色名称" label-width="100px">
+          <el-input v-model="form.roleName" autocomplete="off" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" label-width="100px" show-password>
+          <el-input v-model="form.roleDesc" autocomplete="off" clearable></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
+        <el-button type="primary" @click="userAdd()">确 定</el-button>
+      </div>
+    </el-dialog>
+    <!-- 编辑角色 -->
+    <el-dialog title="编辑角色" :visible.sync="dialogFormVisibleEdit">
+      <el-form :model="form">
+    <el-form-item label="角色名称" label-width="100px">
+          <el-input v-model="form.roleName" autocomplete="off" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" label-width="100px" show-password>
+          <el-input v-model="form.roleDesc" autocomplete="off" clearable></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button type="primary" @click="editUser()">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
+
 </template>
+
 
 <script>
 export default {
@@ -100,20 +133,81 @@ export default {
     return {
       roleslist: [],
       dialogFormVisible: false,
+      dialogFormVisibleAdd:false,
+      dialogFormVisibleEdit:false,
       treelist: [],
       defaultProps: {
         children: "children",
         label: "authName"
       },
       arrcheckedkeys: [],
-      currRoleId: -1
+      currRoleId: -1,
+      //添加用户对话框
+      form:{
+        roleName:'',
+        roleDesc:''
+      }
     };
   },
   created() {
     this.getroleslist();
   },
   methods: {
-    //确认修改权限
+    //确认修改
+    async editUser() {
+      const res = await this.$http.put(
+        `http://47.97.214.102:8888/api/private/v1/roles/${this.form.id}`,
+        this.form
+      );
+      this.form = {};
+      this.dialogFormVisibleEdit = false;
+      this.getroleslist();
+    },
+
+    //修改功能显示对话框
+    async showEditUserDia(val) {
+      this.form = val;
+      this.dialogFormVisibleEdit = true;
+    },
+  
+    //删除功能
+    open(val) {
+      this.$confirm("永久删除该角色, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          const res = await this.$http.delete(
+            `http://47.97.214.102:8888/api/private/v1/roles/${val}`
+          );
+          this.getroleslist();
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除!"
+          });
+        });
+    },
+    //点击添加按钮
+    addrole(){
+      this.dialogFormVisibleAdd=true
+      this.form={}
+    },
+    //添加管理确认
+    async userAdd(){
+      this.dialogFormVisibleAdd=false
+      const res = await this.$http.post(
+        `http://47.97.214.102:8888/api/private/v1/roles`,this.form)
+        this.getroleslist();
+
+    },
+       //确认修改权限
     async setRoleRight() {
       let arr1 = this.$refs.tree.getCheckedKeys();
       let arr2 = this.$refs.tree.getHalfCheckedKeys();
@@ -164,6 +258,7 @@ export default {
       const res = await this.$http.get(
         `http://47.97.214.102:8888/api/private/v1/roles`
       );
+      console.log(res)
       this.roleslist = res.data.data;
     }
   }

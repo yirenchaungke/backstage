@@ -74,7 +74,6 @@ export default {
       const AUTH_TOKEN = localStorage.getItem("token");
       this.$http.defaults.headers.common["Authorization"] = AUTH_TOKEN;
       const res = await this.$http.get(`http://47.97.214.102:8888/api/private/v1/menus`)
-      console.log(res)
       this.menus=res.data.data
     },
     quit() {

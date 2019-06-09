@@ -18,7 +18,7 @@
       </el-col>
     </el-row>
     <!-- 表格 -->
-    <el-table :data="usersData" min-height="400" border style="width: 100%">
+    <el-table :data="usersData" height="450" border style="width: 100%">
       <el-table-column label="序列" width="60" type="index"></el-table-column>
       <el-table-column prop="username" label="姓名" width="100"></el-table-column>
       <el-table-column prop="email" label="邮箱"></el-table-column>
@@ -257,6 +257,7 @@ export default {
     //添加用户
     addUser() {
       this.dialogFormVisibleAdd = true;
+      this.from={}
     },
     //搜索框为空重新加载数据
     clear() {
