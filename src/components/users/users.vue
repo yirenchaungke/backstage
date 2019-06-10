@@ -56,7 +56,13 @@
             @click="open(scope.row.id)"
           ></el-button>
           <!-- 权限 -->
-          <el-button type="success" icon="el-icon-check" circle size="mini" @click="showSetUserRoleDIa(scope.row)"></el-button>
+          <el-button
+            type="success"
+            icon="el-icon-check"
+            circle
+            size="mini"
+            @click="showSetUserRoleDIa(scope.row)"
+          ></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -106,7 +112,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button @click="editUsers()">取 消</el-button>
         <el-button type="primary" @click="editUser()">确 定</el-button>
       </div>
     </el-dialog>
@@ -158,8 +164,8 @@ export default {
         id: ""
       },
       //分配角色
-      currRoleId:1,
-      roles:[],
+      currRoleId: 1,
+      roles: []
     };
   },
   created() {
@@ -167,27 +173,34 @@ export default {
   },
   methods: {
     //修改角色发送请求
-    async setRole(){
-      const res = await this.$http.put(`http://47.97.214.102:8888/api/private/v1/users/${this.form.id}/role`,{rid:this.currRoleId})
-      console.log(res)
-      if(res.data.meta.status===200){
-        this.form={}
+    async setRole() {
+      const res = await this.$http.put(
+        `http://47.97.214.102:8888/api/private/v1/users/${this.form.id}/role`,
+        { rid: this.currRoleId }
+      );
+      console.log(res);
+      if (res.data.meta.status === 200) {
+        this.form = {};
         this.$message.success(res.data.meta.msg);
-       this.dialogFormVisibleRol = false
+        this.dialogFormVisibleRol = false;
       }
     },
     //分配角色
-    async showSetUserRoleDIa(val){
-      this.form = val
-      this.dialogFormVisibleRol = true
+    async showSetUserRoleDIa(val) {
+      this.form = val;
+      this.dialogFormVisibleRol = true;
       //所有角色id
-      const ress = await this.$http.get(`http://47.97.214.102:8888/api/private/v1/roles`)
-      console.log(ress.data.data)
-      this.roles=ress.data.data
+      const ress = await this.$http.get(
+        `http://47.97.214.102:8888/api/private/v1/roles`
+      );
+      console.log(ress.data.data);
+      this.roles = ress.data.data;
       //获取当前角色是用户角色id
-      const res = await this.$http.get(`http://47.97.214.102:8888/api/private/v1/users/${val.id}`)
-      console.log(res.data.data.rid)
-    this.currRoleId=res.data.data.rid
+      const res = await this.$http.get(
+        `http://47.97.214.102:8888/api/private/v1/users/${val.id}`
+      );
+      console.log(res.data.data.rid);
+      this.currRoleId = res.data.data.rid;
     },
     //修改用户状态
     async changeMgState(val) {
@@ -196,6 +209,11 @@ export default {
           val.mg_state
         }`
       );
+    },
+    //取消修改
+    editUsers() {
+      this.getUserList();
+      this.dialogFormVisibleEdit = false;
     },
     //修改用户信息
     async editUser() {
@@ -257,7 +275,7 @@ export default {
     //添加用户
     addUser() {
       this.dialogFormVisibleAdd = true;
-      this.from={}
+      this.from = {};
     },
     //搜索框为空重新加载数据
     clear() {

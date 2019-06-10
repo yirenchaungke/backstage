@@ -90,9 +90,8 @@
           </el-dialog>
         </template>
       </el-table-column>
-
     </el-table>
-<!-- 添加角色对话框 -->
+    <!-- 添加角色对话框 -->
     <el-dialog title="添加角色" :visible.sync="dialogFormVisibleAdd">
       <el-form :model="form">
         <el-form-item label="角色名称" label-width="100px">
@@ -110,7 +109,7 @@
     <!-- 编辑角色 -->
     <el-dialog title="编辑角色" :visible.sync="dialogFormVisibleEdit">
       <el-form :model="form">
-    <el-form-item label="角色名称" label-width="100px">
+        <el-form-item label="角色名称" label-width="100px">
           <el-input v-model="form.roleName" autocomplete="off" clearable></el-input>
         </el-form-item>
         <el-form-item label="角色描述" label-width="100px" show-password>
@@ -118,12 +117,11 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+        <el-button @click="editUsers()">取 消</el-button>
         <el-button type="primary" @click="editUser()">确 定</el-button>
       </div>
     </el-dialog>
   </el-card>
-
 </template>
 
 
@@ -133,8 +131,8 @@ export default {
     return {
       roleslist: [],
       dialogFormVisible: false,
-      dialogFormVisibleAdd:false,
-      dialogFormVisibleEdit:false,
+      dialogFormVisibleAdd: false,
+      dialogFormVisibleEdit: false,
       treelist: [],
       defaultProps: {
         children: "children",
@@ -143,9 +141,9 @@ export default {
       arrcheckedkeys: [],
       currRoleId: -1,
       //添加用户对话框
-      form:{
-        roleName:'',
-        roleDesc:''
+      form: {
+        roleName: "",
+        roleDesc: ""
       }
     };
   },
@@ -153,6 +151,11 @@ export default {
     this.getroleslist();
   },
   methods: {
+    //取消修改
+    editUsers() {
+      this.dialogFormVisibleEdit = false;
+      this.getroleslist();
+    },
     //确认修改
     async editUser() {
       const res = await this.$http.put(
@@ -169,7 +172,7 @@ export default {
       this.form = val;
       this.dialogFormVisibleEdit = true;
     },
-  
+
     //删除功能
     open(val) {
       this.$confirm("永久删除该角色, 是否继续?", "提示", {
@@ -195,19 +198,20 @@ export default {
         });
     },
     //点击添加按钮
-    addrole(){
-      this.dialogFormVisibleAdd=true
-      this.form={}
+    addrole() {
+      this.dialogFormVisibleAdd = true;
+      this.form = {};
     },
     //添加管理确认
-    async userAdd(){
-      this.dialogFormVisibleAdd=false
+    async userAdd() {
+      this.dialogFormVisibleAdd = false;
       const res = await this.$http.post(
-        `http://47.97.214.102:8888/api/private/v1/roles`,this.form)
-        this.getroleslist();
-
+        `http://47.97.214.102:8888/api/private/v1/roles`,
+        this.form
+      );
+      this.getroleslist();
     },
-       //确认修改权限
+    //确认修改权限
     async setRoleRight() {
       let arr1 = this.$refs.tree.getCheckedKeys();
       let arr2 = this.$refs.tree.getHalfCheckedKeys();
@@ -258,7 +262,6 @@ export default {
       const res = await this.$http.get(
         `http://47.97.214.102:8888/api/private/v1/roles`
       );
-      console.log(res)
       this.roleslist = res.data.data;
     }
   }
