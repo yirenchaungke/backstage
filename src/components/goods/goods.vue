@@ -14,7 +14,7 @@
         >
           <el-button slot="append" icon="el-icon-search" @click="select()"></el-button>
         </el-input>
-        <el-button type="primary" @click="addUser()">添加用户</el-button>
+        <el-button type="primary" @click="$router.push({name:'goodsadd'})">添加商品</el-button>
       </el-col>
     </el-row>
     <!-- 表格 -->
@@ -40,7 +40,7 @@
             icon="el-icon-delete"
             circle
             size="mini"
-            @click="open(scope.row.id)"
+            @click="open(scope.row.goods_id)"
           ></el-button>
         </template>
       </el-table-column>
@@ -55,39 +55,26 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
-
-    <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="dialogFormVisibleAdd">
-      <el-form :model="form">
-        <el-form-item label="账号" label-width="100px">
-          <el-input v-model="form.username" autocomplete="off" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="密码" label-width="100px" show-password>
-          <el-input v-model="form.password" autocomplete="off" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" label-width="100px">
-          <el-input v-model="form.email" autocomplete="off" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="电话" label-width="100px">
-          <el-input v-model="form.mobile" autocomplete="off" clearable></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisibleAdd = false">取 消</el-button>
-        <el-button type="primary" @click="userAdd()">确 定</el-button>
-      </div>
-    </el-dialog>
     <!-- 编辑用户 -->
     <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
       <el-form :model="form">
-        <el-form-item label="账号" label-width="100px">
-          <el-input v-model="form.username" autocomplete="off" :disabled="true"></el-input>
+        <el-form-item label="商品名称" label-width="100px">
+          <el-input v-model="form.goods_name" autocomplete="off" clearable></el-input>
         </el-form-item>
-        <el-form-item label="邮箱" label-width="100px">
-          <el-input v-model="form.email" autocomplete="off" clearable></el-input>
+        <el-form-item label="单价" label-width="100px">
+          <el-input v-model="form.goods_price" autocomplete="off" clearable></el-input>
         </el-form-item>
-        <el-form-item label="电话" label-width="100px">
-          <el-input v-model="form.mobile" autocomplete="off" clearable></el-input>
+        <el-form-item label="库存" label-width="100px">
+          <el-input v-model="form.goods_number" autocomplete="off" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="重量" label-width="100px">
+          <el-input v-model="form.goods_weight" autocomplete="off" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="介绍" label-width="100px">
+          <el-input v-model="form.goods_introduce" autocomplete="off" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="参数" label-width="100px">
+          <el-input v-model="form.attrs" autocomplete="off" clearable></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -129,18 +116,19 @@ export default {
       pagesize: 10,
       //总条数
       total: 1,
-      //添加用户按钮
-      dialogFormVisibleAdd: false,
       //编辑用户按钮
       dialogFormVisibleEdit: false,
       //分配角色
       dialogFormVisibleRol: false,
       form: {
-        username: "",
-        password: "",
-        email: "",
-        mobile: "",
-        id: ""
+        goods_name: "",
+        goods_price: "",
+        goods_number: "",
+        goods_weight: "",
+        goods_introduce:'',
+        goods_id:"",
+        id: "",
+        goods_cat: ""
       },
       //分配角色
       currRoleId:1,
@@ -182,10 +170,14 @@ export default {
         }`
       );
     },
+    editUser(){
+      this.dialogFormVisibleEdit = false;
+      this.getUserList();
+    },
     //修改用户信息
     async editUser() {
       const res = await this.$http.put(
-        `http://47.97.214.102:8888/api/private/v1/goods/${this.form.id}`,
+        `http://47.97.214.102:8888/api/private/v1/goods/${this.form.goods_id}`,
         this.form
       );
       this.form = {};
@@ -221,29 +213,6 @@ export default {
           });
         });
     },
-    //确认添加用户
-    async userAdd() {
-      const res = await this.$http.post(
-        `http://47.97.214.102:8888/api/private/v1/goods`,
-        this.form
-      );
-      const {
-        meta: { status, msg }
-      } = res.data;
-      if (status === 201) {
-        this.form = {};
-        this.dialogFormVisibleAdd = false;
-        this.getUserList();
-        this.$message.success(msg);
-      } else {
-        this.$message.warning(msg);
-      }
-    },
-    //添加用户
-    addUser() {
-      this.dialogFormVisibleAdd = true;
-      this.from={}
-    },
     //搜索框为空重新加载数据
     clear() {
       this.getUserList();
@@ -272,6 +241,7 @@ export default {
           this.query
         }&pagenum=${this.pagenum}&pagesize=${this.pagesize}`
       );
+      console.log(res.data)
       const {
         data: { goods, total },
         meta: { status, msg }
