@@ -10,7 +10,7 @@
           <h1 class="msg">一人创客电商后台管理</h1>
         </el-col>
         <el-col :span="5">
-          <h4 class="user">我去</h4>
+          <h4 class="user"></h4>
         </el-col>
         <el-col :span="1">
           <span class="quit" @click="quit()">退出</span>
