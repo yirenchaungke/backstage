@@ -11,6 +11,7 @@ import Params from '@/components/params/params'
 import Categories from '@/components/categories/categories'
 import Reports from '@/components/reports/reports'
 import GoodsAdd from '@/components/goods/goodsadd'
+import Cteparams from '../components/goods/cateparams.vue'
 
 Vue.use(Router)
 
@@ -70,9 +71,9 @@ export default new Router({
                     component: Reports
                 },
                 {
-                    path: 'reports',
-                    name: 'reports',
-                    component: Reports
+                    path: 'cteparams',
+                    name: 'cteparams',
+                    component: Cteparams
                 }
             ]
         }

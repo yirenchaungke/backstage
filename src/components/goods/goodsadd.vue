@@ -6,7 +6,7 @@
     <el-alert title="添加商品" type="success" center show-icon></el-alert>
     <!-- 步骤条 -->
     <el-steps
-      :active="1*active"
+      :active="1"
       finish-status="success"
       simple
       style="margin-top: 20px;margin-bottom:20px;"
@@ -19,10 +19,9 @@
     </el-steps>
     <!--  -->
     <el-form
-      label-position="left"
+      label-position="top"
       label-width="80px"
       :model="form"
-      style="height:300px;overflow:auto;"
     >
       <el-tabs v-model="active" tab-position="left" @tab-click="tabChange()">
         <el-tab-pane name="1" label="基本信息">
@@ -40,7 +39,6 @@
             <el-input v-model="form.goods_number"></el-input>
           </el-form-item>
           <el-form-item label="商品分类">
-            {{values}}
             <!-- 级联选择器 -->
             <el-cascader
               expand-trigger="hover"
@@ -52,7 +50,7 @@
           </el-form-item>
         </el-tab-pane>
         <el-tab-pane name="2" label="商品参数">
-          <div v-if="arrAy.length==0">没有参数</div>
+          <div v-if="arrAy.length==0">产品没有参数请继续</div>
           <!-- 商品参数 -->
           <el-form-item :label="i.attr_name" v-for="(i,index) in arrAy" :key="index">
             <el-checkbox-group v-model="checkList">
@@ -61,6 +59,7 @@
           </el-form-item>
         </el-tab-pane>
         <el-tab-pane name="3" label="商品属性">
+          <div v-if="arrAy.length==0">产品没有属性可选请继续</div>
           <!-- 商品属性 -->
           <el-form-item :label="is.attr_name" v-for="(is,index) in arrStaticparams" :key="index">
             <el-input v-model="is.attr_vals"></el-input>
@@ -85,10 +84,13 @@
         <el-tab-pane name="5" label="商品内容">
           <!-- 商品内容 -->
           <el-form-iten>
-            <el-button type="primary">点我上传</el-button>
             <!-- 富文本编辑器 -->
+            <div v-html="form.goods_introduce"></div>
+            <quill-editor v-model="form.goods_introduce"></quill-editor>
+
           </el-form-iten>
         </el-tab-pane>
+        <el-button type="primary" @click="addGoods()">确认添加</el-button>
       </el-tabs>
     </el-form>
     <!--  -->
@@ -116,9 +118,9 @@ export default {
         goods_introduce: "",
         goods_id: "",
         id: "",
-        pics: "",
+        pics: [],
         goods_cat: "",
-        attrs: ""
+        attrs: []
       },
       // 层级下拉框的数据源
       values: [],
@@ -144,10 +146,13 @@ export default {
 handleRemove(file){
   console.log('移除')
   console.log(file)
+  let Index = this.form.pics.findIndex((item) =>{
+   return item.pic===file.response.data.tmp_path
+  })
+  this.form.pics.splice(Index,1)
 },
 handleSsuccess(file){
-  console.log('成功')
-  console.log(file)
+  this.form.pics.push({pic:file.data.tmp_path})
   // this.tmp_path
 
 },
@@ -189,6 +194,28 @@ handleSsuccess(file){
         }
       }
     },
+    //确认上添加商品
+     async addGoods(){
+      //请求前处理参数赋值
+      this.form.goods_cat=this.values.join(',')
+      let arr1 = this.arrAy.map((item)=>{
+        return {atttr_id:item.attr_id,attr_value:item.attrvals}
+      })
+     let arr2 = this.arrStaticparams.map((item)=>{
+        return {atttr_id:item.attr_id,attr_value:item.attrvals}
+      })
+      this.form.attrs =[...arr1,...arr2]
+      const res = await this.$http.post(`http://47.97.214.102:8888/api/private/v1/goods`,this.form)
+      console.log(res)
+      const {meta:{msg,status}}=res.data
+      if(status==201){
+        //添加成功提示成功
+        this.$message.success(msg);
+      }else{
+        //失败提示失败的提示
+        this.$message.warning(msg);
+      }
+    },
     handleChange() {},
     async getGoodCate() {
       const res = await this.$http.get(
@@ -207,4 +234,7 @@ handleSsuccess(file){
 .goodsadd {
   height: 100%;
 }
+
+.quill-editor,.ql-container{height: 300px}
+.quill-editor{margin-bottom: 100px;}
 </style>
