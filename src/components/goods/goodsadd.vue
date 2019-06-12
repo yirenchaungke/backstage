@@ -173,7 +173,7 @@ handleSsuccess(file){
           console.log(res.data.data);
           this.arrAy = res.data.data;
           this.arrAy.forEach(element => {
-            element.attr_vals = element.attr_vals.trim().split(",");
+            element.attr_vals = element.attr_vals.split(",");
           });
         }
       }

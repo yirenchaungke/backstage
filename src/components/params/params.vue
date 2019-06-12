@@ -33,7 +33,7 @@
                 v-for="tag in scope.row.attr_vals"
                 closable
                 :disable-transitions="false"
-                @close="handleClose(scope.row.attr_vals,tag)"
+                @close="handleClose(scope.row,tag)"
               >{{tag}}</el-tag>
               <el-input
                 class="input-new-tag"
@@ -41,8 +41,8 @@
                 v-model="inputValue"
                 ref="saveTagInput"
                 size="small"
-                @keyup.enter.native="handleInputConfirm(scope.row.attr_vals)"
-                @blur="handleInputConfirm(scope.row.attr_vals)"
+                @keyup.enter.native="handleInputConfirm(scope.row)"
+                @blur="handleInputConfirm(scope.row)"
               ></el-input>
               <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
             </template>
@@ -73,7 +73,34 @@
       <el-tab-pane label="静态参数" name="2">
         <!-- 静态参数 -->
         <el-button type="danger">静态参数</el-button>
-        <!-- 静态参数 -->
+        <!-- 静态参数列表 -->
+        <el-table :data="arryStaticDyparams" style="width: 100%">
+          <el-table-column type="index" label="序号">
+            
+          </el-table-column>
+          <el-table-column label="属性名称" prop="attr_name"></el-table-column>
+          <el-table-column label="属性值" prop="attr_vals"></el-table-column>
+          <el-table-column label="操作" prop="desc">
+            <template slot-scope="scope">
+              <!-- 修改 -->
+              <el-button
+                type="primary"
+                icon="el-icon-edit"
+                circle
+                size="mini"
+                @click="showEditUserDia(scope.row)"
+              ></el-button>
+              <!-- 删除 -->
+              <el-button
+                type="danger"
+                icon="el-icon-delete"
+                circle
+                size="mini"
+                @click="open(scope.row.id)"
+              ></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-tab-pane>
     </el-tabs>
   </el-card>
@@ -83,17 +110,7 @@
 export default {
   data() {
     return {
-      tableData: [
-        {
-          id: "12987122",
-          name: "好滋好味鸡蛋仔",
-          category: "江浙小吃、小吃零食",
-          desc: "荷兰优质淡奶，奶香浓而不腻",
-          address: "上海市普陀区真北路",
-          shop: "王小虎夫妻店",
-          shopId: "10333"
-        }
-      ],
+      arryStaticDyparams: [],
       options: [],
       selectedOptions: [],
       defaultProp: {
@@ -114,7 +131,21 @@ export default {
   },
   methods: {
     //数据展示
-    handleClick() {},
+   async handleClick() {
+      if(this.activeName==="2"){
+        console.log(1)
+        if(this.selectedOptions.length===3){
+          console.log(2)
+          const res = await this.$http.get(
+            `http://47.97.214.102:8888/api/private/v1/categories/${
+              this.selectedOptions[2]
+            }/attributes?sel=only`
+          );
+          console.log(res.data.data);
+          this.arryStaticDyparams = res.data.data;
+        }
+      }
+    },
     async getGoodscate() {
       const res = await this.$http.get(
         `http://47.97.214.102:8888/api/private/v1/categories?type=3`
@@ -131,8 +162,16 @@ export default {
           }/attributes?sel=many`
         );
         this.arryDyparams = res.data.data;
-          this.arryDyparams.forEach(item =>{
-              item.attr_vals = item.arr_vals.length === 0 ? [] : item.arrt_vals.trim().split(",")})
+        // // this.arryDyparams.attr_vals=arryDyparams.attr_vals.split(",");
+        // let a= []
+        //   this.arryDyparams.forEach(item =>{
+        //       a.push = item.arr_vals.length === 0 ? [] : item.arrt_vals.split(",")
+        //        console.log(item.attr_vals)
+        //       })
+        this.arryDyparams.forEach(i=>{
+          i.attr_vals=i.attr_vals.split(",")
+          console.log(i.attr_vals)
+        })
         console.log(this.arryDyparams);
       }
      
@@ -140,8 +179,12 @@ export default {
 
     },
     //动态添加标签
-     handleClose(attr_vals,tag) {
-        this.attr_vals.splice(this.attr_vals.indexOf(tag), 1);
+   async  handleClose(vals,tag) {
+        vals.attr_vals.splice(vals.attr_vals.indexOf(tag), 1);
+        // categories/:id/attributes/:attrId
+        let putData = {attr_name:vals.attr_name,attr_sel:"many",attr_vals:vals.attr_vals.join(',')}
+        const res = await this.$http.put(
+          `http://47.97.214.102:8888/api/private/v1/categories/${this.selectedOptions[2]}/attributes/${vals.attr_id}`,putData);
       },
 
       showInput() {
@@ -151,13 +194,16 @@ export default {
         });
       },
 
-      handleInputConfirm(attr_vals) {
+     async handleInputConfirm(vals) {
         let inputValue = this.inputValue;
         if (inputValue) {
-          attr_vals.push(inputValue);
+          vals.attr_vals.push(inputValue);
         }
         this.inputVisible = false;
         this.inputValue = '';
+        let putData = {attr_name:vals.attr_name,attr_sel:"many",attr_vals:vals.attr_vals.join(',')}
+        const res = await this.$http.put(
+          `http://47.97.214.102:8888/api/private/v1/categories/${this.selectedOptions[2]}/attributes/${vals.attr_id}`,putData);
       }
   }
 };
