@@ -18,11 +18,7 @@
       <el-step title="商品内容"></el-step>
     </el-steps>
     <!--  -->
-    <el-form
-      label-position="top"
-      label-width="80px"
-      :model="form"
-    >
+    <el-form label-position="top" label-width="80px" :model="form">
       <el-tabs v-model="active" tab-position="left" @tab-click="tabChange()">
         <el-tab-pane name="1" label="基本信息">
           <!-- 基本信息 -->
@@ -68,17 +64,17 @@
         <el-tab-pane name="4" label="商品图片">
           <!-- 商品图片 -->
           <el-form-item>
-          <el-upload
-            action="http://47.97.214.102:8888/api/private/v1/upload"
-            :headers='headers'
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :on-success='handleSsuccess'
-            list-type="picture"
-          >
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-          </el-upload>
+            <el-upload
+              action="http://47.97.214.102:8888/api/private/v1/upload"
+              :headers="headers"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :on-success="handleSsuccess"
+              list-type="picture"
+            >
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
           </el-form-item>
         </el-tab-pane>
         <el-tab-pane name="5" label="商品内容">
@@ -87,7 +83,6 @@
             <!-- 富文本编辑器 -->
             <div v-html="form.goods_introduce"></div>
             <quill-editor v-model="form.goods_introduce"></quill-editor>
-
           </el-form-iten>
         </el-tab-pane>
         <el-button type="primary" @click="addGoods()">确认添加</el-button>
@@ -98,11 +93,11 @@
 </template>
 
 <script>
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
- 
-import { quillEditor } from 'vue-quill-editor'
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+
+import { quillEditor } from "vue-quill-editor";
 export default {
   components: {
     quillEditor
@@ -135,27 +130,24 @@ export default {
       arrAy: [],
       checkList: [],
       arrStaticparams: [],
-      headers:{
-        Authorization:localStorage.getItem("token")
+      headers: {
+        Authorization: localStorage.getItem("token")
       }
     };
   },
   methods: {
     //图片上传
-    handlePreview(file){},
-handleRemove(file){
-  console.log('移除')
-  console.log(file)
-  let Index = this.form.pics.findIndex((item) =>{
-   return item.pic===file.response.data.tmp_path
-  })
-  this.form.pics.splice(Index,1)
-},
-handleSsuccess(file){
-  this.form.pics.push({pic:file.data.tmp_path})
-  // this.tmp_path
-
-},
+    handlePreview(file) {},
+    handleRemove(file) {
+      let Index = this.form.pics.findIndex(item => {
+        return item.pic === file.response.data.tmp_path;
+      });
+      this.form.pics.splice(Index, 1);
+    },
+    handleSsuccess(file) {
+      this.form.pics.push({ pic: file.data.tmp_path });
+      // this.tmp_path
+    },
     //点击不通tab触发
     async tabChange() {
       //点击第二个并且三级分类有值
@@ -170,7 +162,7 @@ handleSsuccess(file){
               this.values[2]
             }/attributes?sel=many`
           );
-          console.log(res.data.data);
+
           this.arrAy = res.data.data;
           this.arrAy.forEach(element => {
             element.attr_vals = element.attr_vals.split(",");
@@ -189,29 +181,33 @@ handleSsuccess(file){
               this.values[2]
             }/attributes?sel=only`
           );
-          console.log(res.data.data);
+
           this.arrStaticparams = res.data.data;
         }
       }
     },
     //确认上添加商品
-     async addGoods(){
+    async addGoods() {
       //请求前处理参数赋值
-      this.form.goods_cat=this.values.join(',')
-      let arr1 = this.arrAy.map((item)=>{
-        return {atttr_id:item.attr_id,attr_value:item.attrvals}
-      })
-     let arr2 = this.arrStaticparams.map((item)=>{
-        return {atttr_id:item.attr_id,attr_value:item.attrvals}
-      })
-      this.form.attrs =[...arr1,...arr2]
-      const res = await this.$http.post(`http://47.97.214.102:8888/api/private/v1/goods`,this.form)
-      console.log(res)
-      const {meta:{msg,status}}=res.data
-      if(status==201){
+      this.form.goods_cat = this.values.join(",");
+      let arr1 = this.arrAy.map(item => {
+        return { atttr_id: item.attr_id, attr_value: item.attrvals };
+      });
+      let arr2 = this.arrStaticparams.map(item => {
+        return { atttr_id: item.attr_id, attr_value: item.attrvals };
+      });
+      this.form.attrs = [...arr1, ...arr2];
+      const res = await this.$http.post(
+        `http://47.97.214.102:8888/api/private/v1/goods`,
+        this.form
+      );
+      const {
+        meta: { msg, status }
+      } = res.data;
+      if (status == 201) {
         //添加成功提示成功
         this.$message.success(msg);
-      }else{
+      } else {
         //失败提示失败的提示
         this.$message.warning(msg);
       }
@@ -235,6 +231,11 @@ handleSsuccess(file){
   height: 100%;
 }
 
-.quill-editor,.ql-container{height: 300px}
-.quill-editor{margin-bottom: 100px;}
+.quill-editor,
+.ql-container {
+  height: 300px;
+}
+.quill-editor {
+  margin-bottom: 100px;
+}
 </style>

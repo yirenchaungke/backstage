@@ -238,9 +238,9 @@ export default {
       val.children.forEach(element1 => {
         arrtemp1.push(element1.id);
         element1.children.forEach(element2 => {
-          arrtemp1.push(element2.id);
-          element1.children.forEach(element3 => {
-            arrtemp1.push(element3.id);
+          arrtemp2.push(element2.id);
+          element2.children.forEach(element3 => {
+            arrtemp3.push(element3.id);
           });
         });
       });
@@ -275,6 +275,7 @@ export default {
 .r_btn {
   margin-top: 10px;
   color: rgb(66, 64, 64);
+  margin-bottom: 20px;
 }
 .ssy {
   margin-left: 10px;

@@ -3,11 +3,10 @@
     <!-- 面包屑 -->
     <my-bread level1="订单管理" level2="分类参数"></my-bread>
     <!-- 提示 -->
-    <el-alert title="只允许为第三级添加分类" type="warning"></el-alert>
+    <el-alert title="只允许为第三级添加分类" type="warning" class="sss"></el-alert>
     <!-- 级联选择器 -->
-    <el-form label-position="left" label-width="80px">
+    <el-form label-position="left" label-width="80px" class="sss">
       <el-form-item label="商品分类">
-        {{selectedOptions}}
         <el-cascader
           :show-all-levels="false"
           clearable
@@ -75,9 +74,7 @@
         <el-button type="danger">静态参数</el-button>
         <!-- 静态参数列表 -->
         <el-table :data="arryStaticDyparams" style="width: 100%">
-          <el-table-column type="index" label="序号">
-            
-          </el-table-column>
+          <el-table-column type="index" label="序号"></el-table-column>
           <el-table-column label="属性名称" prop="attr_name"></el-table-column>
           <el-table-column label="属性值" prop="attr_vals"></el-table-column>
           <el-table-column label="操作" prop="desc">
@@ -121,9 +118,9 @@ export default {
       activeName: "1",
       arryDyparams: [],
       //s/////
-      dynamicTags: ['标签一', '标签二', '标签三'],
-        inputVisible: false,
-        inputValue: ''
+      dynamicTags: ["标签一", "标签二", "标签三"],
+      inputVisible: false,
+      inputValue: ""
     };
   },
   created() {
@@ -131,17 +128,14 @@ export default {
   },
   methods: {
     //数据展示
-   async handleClick() {
-      if(this.activeName==="2"){
-        console.log(1)
-        if(this.selectedOptions.length===3){
-          console.log(2)
+    async handleClick() {
+      if (this.activeName === "2") {
+        if (this.selectedOptions.length === 3) {
           const res = await this.$http.get(
             `http://47.97.214.102:8888/api/private/v1/categories/${
               this.selectedOptions[2]
             }/attributes?sel=only`
           );
-          console.log(res.data.data);
           this.arryStaticDyparams = res.data.data;
         }
       }
@@ -162,49 +156,54 @@ export default {
           }/attributes?sel=many`
         );
         this.arryDyparams = res.data.data;
-        // // this.arryDyparams.attr_vals=arryDyparams.attr_vals.split(",");
-        // let a= []
-        //   this.arryDyparams.forEach(item =>{
-        //       a.push = item.arr_vals.length === 0 ? [] : item.arrt_vals.split(",")
-        //        console.log(item.attr_vals)
-        //       })
-        this.arryDyparams.forEach(i=>{
-          i.attr_vals=i.attr_vals.split(",")
-          console.log(i.attr_vals)
-        })
-        console.log(this.arryDyparams);
+        this.arryDyparams.forEach(i => {
+          i.attr_vals = i.attr_vals.split(",");
+        });
       }
-     
-      
-
     },
     //动态添加标签
-   async  handleClose(vals,tag) {
-        vals.attr_vals.splice(vals.attr_vals.indexOf(tag), 1);
-        // categories/:id/attributes/:attrId
-        let putData = {attr_name:vals.attr_name,attr_sel:"many",attr_vals:vals.attr_vals.join(',')}
-        const res = await this.$http.put(
-          `http://47.97.214.102:8888/api/private/v1/categories/${this.selectedOptions[2]}/attributes/${vals.attr_id}`,putData);
-      },
+    async handleClose(vals, tag) {
+      vals.attr_vals.splice(vals.attr_vals.indexOf(tag), 1);
+      // categories/:id/attributes/:attrId
+      let putData = {
+        attr_name: vals.attr_name,
+        attr_sel: "many",
+        attr_vals: vals.attr_vals.join(",")
+      };
+      const res = await this.$http.put(
+        `http://47.97.214.102:8888/api/private/v1/categories/${
+          this.selectedOptions[2]
+        }/attributes/${vals.attr_id}`,
+        putData
+      );
+    },
 
-      showInput() {
-        this.inputVisible = true;
-        this.$nextTick(_ => {
-          this.$refs.saveTagInput.$refs.input.focus();
-        });
-      },
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
 
-     async handleInputConfirm(vals) {
-        let inputValue = this.inputValue;
-        if (inputValue) {
-          vals.attr_vals.push(inputValue);
-        }
-        this.inputVisible = false;
-        this.inputValue = '';
-        let putData = {attr_name:vals.attr_name,attr_sel:"many",attr_vals:vals.attr_vals.join(',')}
-        const res = await this.$http.put(
-          `http://47.97.214.102:8888/api/private/v1/categories/${this.selectedOptions[2]}/attributes/${vals.attr_id}`,putData);
+    async handleInputConfirm(vals) {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        vals.attr_vals.push(inputValue);
       }
+      this.inputVisible = false;
+      this.inputValue = "";
+      let putData = {
+        attr_name: vals.attr_name,
+        attr_sel: "many",
+        attr_vals: vals.attr_vals.join(",")
+      };
+      const res = await this.$http.put(
+        `http://47.97.214.102:8888/api/private/v1/categories/${
+          this.selectedOptions[2]
+        }/attributes/${vals.attr_id}`,
+        putData
+      );
+    }
   }
 };
 </script>
@@ -214,18 +213,22 @@ export default {
   height: 100%;
 }
 .el-tag + .el-tag {
-    margin-left: 10px;
-  }
-  .button-new-tag {
-    margin-left: 10px;
-    height: 32px;
-    line-height: 30px;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .input-new-tag {
-    width: 90px;
-    margin-left: 10px;
-    vertical-align: bottom;
-  }
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+.sss{
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 </style>

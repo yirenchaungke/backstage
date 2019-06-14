@@ -18,7 +18,7 @@
       </el-col>
     </el-row>
     <!-- 表格 -->
-    <el-table :data="usersData" height="450" border style="width: 100%">
+    <el-table :data="usersData" height="450" border style="width: 100%" class="biao">
       <el-table-column label="序列" width="60" type="index"></el-table-column>
       <el-table-column prop="username" label="姓名" width="100"></el-table-column>
       <el-table-column prop="email" label="邮箱"></el-table-column>
@@ -178,7 +178,6 @@ export default {
         `http://47.97.214.102:8888/api/private/v1/users/${this.form.id}/role`,
         { rid: this.currRoleId }
       );
-      console.log(res);
       if (res.data.meta.status === 200) {
         this.form = {};
         this.$message.success(res.data.meta.msg);
@@ -193,13 +192,13 @@ export default {
       const ress = await this.$http.get(
         `http://47.97.214.102:8888/api/private/v1/roles`
       );
-      console.log(ress.data.data);
+      // console.log(ress.data.data);
       this.roles = ress.data.data;
       //获取当前角色是用户角色id
       const res = await this.$http.get(
         `http://47.97.214.102:8888/api/private/v1/users/${val.id}`
       );
-      console.log(res.data.data.rid);
+      // console.log(res.data.data.rid);
       this.currRoleId = res.data.data.rid;
     },
     //修改用户状态
@@ -329,5 +328,6 @@ export default {
 }
 .selectRow {
   margin-top: 20px;
+  margin-bottom: 20px;
 }
 </style>
